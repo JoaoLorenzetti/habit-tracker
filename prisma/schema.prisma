@@ -1,0 +1,67 @@
+// Documentação: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Usuário do sistema
+model User {
+  id           String   @id @default(uuid())
+  nome         String
+  email        String   @unique
+  senha        String
+  criadoEm    DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  // Um usuário pode ter vários hábitos
+  habitos Habit[]
+
+  @@map("usuarios")
+}
+
+// Hábito criado pelo usuário
+model Habit {
+  id           String     @id @default(uuid())
+  titulo       String
+  descricao    String?
+  cor          String     @default("#6366f1")
+  frequencia   Frequencia @default(DIARIO)
+  ativo        Boolean    @default(true)
+  criadoEm    DateTime   @default(now())
+  atualizadoEm DateTime  @updatedAt
+
+  // Relacionamento com o usuário dono do hábito
+  usuarioId String
+  usuario   User   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  // Registros de check-in do hábito
+  registros HabitLog[]
+
+  @@map("habitos")
+}
+
+// Registro de um check-in diário de um hábito
+model HabitLog {
+  id        String   @id @default(uuid())
+  data      DateTime
+  criadoEm DateTime @default(now())
+
+  // Relacionamento com o hábito
+  habitoId String
+  habito   Habit  @relation(fields: [habitoId], references: [id], onDelete: Cascade)
+
+  // Garante que um hábito só pode ser marcado uma vez por dia
+  @@unique([habitoId, data])
+  @@map("habito_registros")
+}
+
+// Frequência do hábito
+enum Frequencia {
+  DIARIO   // todos os dias
+  SEMANAL  // uma vez por semana
+}
