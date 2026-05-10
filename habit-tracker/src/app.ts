@@ -4,6 +4,7 @@ import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
 import { errorHandler } from './middlewares/errorHandler.middleware';
 import authRoutes from './routes/auth.routes';
+import habitRoutes from './routes/habit.routes';
 
 const app = express();
 
@@ -21,7 +22,7 @@ app.get('/health', (req, res) => {
 
 // Rotas da API
 app.use('/api/v1/auth', authRoutes);
-// app.use('/api/v1/habits', habitRoutes); // será adicionado no dia 4
+app.use('/api/v1/habits', habitRoutes);
 
 // Handler de rota não encontrada
 app.use((req, res) => {
