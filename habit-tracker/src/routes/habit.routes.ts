@@ -1,12 +1,15 @@
 import { Router } from 'express';
 import { HabitController } from '../controllers/habit.controller';
 import { authenticate } from '../middlewares/auth.middleware';
+import checkinRoutes from './checkin.routes';
 
 const router = Router();
 const habitController = new HabitController();
 
 // Todas as rotas de hábitos exigem autenticação
 router.use(authenticate);
+router.use('/:id/checkin', checkinRoutes);
+router.use('/:id', checkinRoutes);
 
 /**
  * @swagger
