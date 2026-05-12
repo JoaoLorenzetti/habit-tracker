@@ -29,7 +29,7 @@ export class StatisticsService {
 
     // Calcula o maior streak entre todos os hábitos
     const streaks = await Promise.all(
-      habitos.map((h) => checkinService.calcularStreak(h.id))
+      habitos.map((h: { id: string }) => checkinService.calcularStreak(h.id))
     );
     const maiorStreak = streaks.length > 0 ? Math.max(...streaks) : 0;
 
@@ -106,7 +106,7 @@ export class StatisticsService {
 
     // Para cada hábito calcula o streak e o progresso semanal
     const resultado = await Promise.all(
-      habitos.map(async (habito) => {
+      habitos.map(async (habito: { id: string; titulo: string; cor: string; frequencia: string; registros: { length: number } }) => {
         const streak = await checkinService.calcularStreak(habito.id);
         const completadosNaSemana = habito.registros.length;
 
